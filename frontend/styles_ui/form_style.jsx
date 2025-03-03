@@ -1,0 +1,1 @@
+export const form_style = "flex flex-col justify-center items-center gap-4"

@@ -1,0 +1,1 @@
+export const ipt = "focus:outline-none border-b-2 w-60"
