@@ -1,4 +1,4 @@
-import {z} from "zod"
+import {z} from "zod" // for runtime check
 
 export const signUpSchema = z.object({
     firstname : z.string().min(3),

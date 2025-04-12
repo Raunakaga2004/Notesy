@@ -39,7 +39,7 @@ export default function Home(){
     return <div className="flex flex-col justify-between h-screen w-screeen">
         {/* Header */}
         <div className="flex flex-row justify-between items-center bg-[#6c757d] h-20 pl-4 pr-4">
-            <div className="font-semibold text-lg">DevPage</div>
+            <div className="font-semibold text-lg">Notesy</div>
             {Object.keys(user).length == 0 /*If object is Empty*/? <div className="flex flex-row gap-4">
                 <button onClick={()=>navigate("/signin")} className={btn}>Sign In</button>
                 <button onClick={()=>navigate("/signup")} className={btn}>Sign Up</button>

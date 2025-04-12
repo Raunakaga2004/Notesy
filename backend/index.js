@@ -6,6 +6,7 @@ import cookieParser from "cookie-parser"
 
 //utilities
 import authRoutes from "./routes/authRoutes.js"
+import mainRoutes from "./routes/mainRoutes.js"
 
 const app = express();
 
@@ -26,8 +27,8 @@ mongoose.connect(process.env.MONGO_URI)
     .catch(err => console.log(err))
 
 //Routes 
-app.use("/api/auth", authRoutes)
-
+app.use("/api/auth", authRoutes);
+app.use("/api/main", mainRoutes);
 
 const PORT = process.env.PORT || 5000; //some productions changes the PORT so if the PORT is not found run on 5000 port
 app.listen(PORT, () => console.log(`Server is running on Port : ${PORT}`))

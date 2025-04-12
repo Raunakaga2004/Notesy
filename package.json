@@ -6,7 +6,7 @@
   "scripts": {
     "frontend": "cd frontend && npm run dev",
     "backend": "npx nodemon ./backend/index.js",
-    "build": "concurrently \"npm run frontend\" \"npm run backend\""
+    "dev": "concurrently \"npm run frontend\" \"npm run backend\""
   },
   "keywords": [],
   "author": "",
