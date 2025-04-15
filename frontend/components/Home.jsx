@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom"
-import { useState, useEffect } from "react"
+import { useState, useEffect, use } from "react"
 import axios from "axios"
 
 import { notifyDefault } from "../utils/toast"
@@ -12,6 +12,8 @@ export default function Home(){
 
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
+
+    const [notes, setNotes] = useState([]);
 
     useEffect(()=>{
         async function fetch(){
@@ -56,6 +58,21 @@ export default function Home(){
             })
     }
 
+    // to get all the notes from database 
+    useEffect(()=>{
+        async function fetch(){
+            await axios.get("http://localhost:5000/api/main/fetch",{
+                withCredentials : true
+            }).then((res)=>{
+                setNotes(res.data);
+                console.log("Notes fetched!");
+            }).catch((e)=>{
+                console.log(e);
+            })
+        }
+        fetch();
+    }, [])
+
     return <div className="flex flex-col justify-between h-screen w-screeen">
         {/* Header */}
         <div className="flex flex-row justify-between items-center bg-[#6c757d] h-20 pl-4 pr-4">
@@ -83,6 +100,19 @@ export default function Home(){
             </div> : <></>
         }
 
-        
+        {/* Display all notes */}
+        <div>
+            {notes.map((note)=>{
+                //to edit note
+                async function editNote(id){
+                    setEditWindow(true);
+                }
+
+                return <div key={note._id} onClick={()=>editNote(note._id)}>
+                    {note.title}<br/><br/>
+                    {note.content}
+                </div>
+            })}
+        </div>
     </div>
 }
