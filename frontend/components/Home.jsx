@@ -9,6 +9,7 @@ export default function Home(){
     const [user, setUser] = useState({}) //user details except password will be stored
 
     const [noteWindow, setNoteWindow] = useState(false); // note window to edit or add note // a form to submit
+    const [editWindow, setEditWindow] = useState(false); // note window for specific note to edit or view that note fully
 
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
@@ -109,8 +110,17 @@ export default function Home(){
                 }
 
                 return <div key={note._id} onClick={()=>editNote(note._id)}>
-                    {note.title}<br/><br/>
+                    <br/>
+                    {note.title}<br/>
                     {note.content}
+                    {/* not show full content at last use ... */}
+
+                    {/* edit window for this note */}
+                    {editWindow ? <div>
+                        <input value={note.title}></input> {/* check how to edit while showing content and also find alternative to input box*/}
+                        <input value={note.content}></input>
+                        </div>:<></>
+                    }
                 </div>
             })}
         </div>
