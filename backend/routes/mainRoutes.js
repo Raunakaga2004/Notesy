@@ -13,7 +13,7 @@ router.get("/fetch", verifyToken, async(req, res)=>{
             message: "No token provided. Sign In first!"
         })
 
-        const notes = await Notes.find({});
+        const notes = await Notes.find({user : userId});
         res.status(200).json(notes);
     } catch(e){
         res.status(500).json({
@@ -31,7 +31,10 @@ router.get("/fetchNote", verifyToken, async(req, res)=>{
 
         const id = req.query.id; // id of notes
         
-        const note = await Notes.findById(id);
+        const note = await Notes.find({
+            _id : id,
+            user : userId
+        });
         if(!note){
             return res.status(401).json({
                 message : "Note doesn't Exist"
@@ -78,11 +81,17 @@ router.delete("/delete", verifyToken, async(req, res)=>{
         })
 
         const id = req.query.id;
-        if(!(await Notes.exists({_id : id}))){
+        if(!(await Notes.exists({
+            _id : id,
+            user : userId
+        }))){
            return res.status(401).json({message : "Note doesn't Exist"});
         }
 
-        const note = await Notes.findByIdAndDelete(id);
+        const note = await Notes.findOneAndDelete({
+            _id : id,
+            user : userId
+        });
         
         res.status(200).json({
             message : "Note deleted Successfully!"
@@ -102,12 +111,18 @@ router.put("/update", verifyToken, async(req, res)=>{
         })
 
         const id = req.query.id;
-        if(!(await Notes.exists({_id : id}))){
+        if(!(await Notes.exists({
+            _id : id,
+            user : userId
+        }))){
             return res.status(401).json({message : "Note doesn't Exist"});
         }
 
         const {title, content} = req.body;
-        const note = await Notes.findByIdAndUpdate(id, {
+        const note = await Notes.findOneAndUpdate({
+            _id : id,
+            user : userId
+        }, {
             title : title,
             content : content
         });
