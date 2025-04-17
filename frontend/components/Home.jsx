@@ -4,12 +4,12 @@ import axios from "axios"
 
 import { notifyDefault } from "../utils/toast"
 import { btn } from "../styles_ui/btn"
+import DisplayNotes from "./DisplayNotes"
 
 export default function Home(){
     const [user, setUser] = useState({}) //user details except password will be stored
 
     const [noteWindow, setNoteWindow] = useState(false); // note window to edit or add note // a form to submit
-    const [editWindow, setEditWindow] = useState(false); // note window for specific note to edit or view that note fully
 
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
@@ -72,7 +72,7 @@ export default function Home(){
             })
         }
         fetch();
-    }, [])
+    }, [noteWindow])
 
     return <div className="flex flex-col justify-between h-screen w-screeen">
         {/* Header */}
@@ -99,28 +99,15 @@ export default function Home(){
                     <button type="submit">Add Note</button>
                 </form>
             </div> : <></>
+            // use textarea for 'content' instead of input box
         }
 
         {/* Display all notes */}
         <div>
             {notes.map((note)=>{
-                //to edit note
-                async function editNote(id){
-                    setEditWindow(true);
-                }
 
-                return <div key={note._id} onClick={()=>editNote(note._id)}>
-                    <br/>
-                    {note.title}<br/>
-                    {note.content}
-                    {/* not show full content at last use ... */}
-
-                    {/* edit window for this note */}
-                    {editWindow ? <div>
-                        <input value={note.title}></input> {/* check how to edit while showing content and also find alternative to input box*/}
-                        <input value={note.content}></input>
-                        </div>:<></>
-                    }
+                return <div>
+                    {DisplayNotes(note)}
                 </div>
             })}
         </div>
