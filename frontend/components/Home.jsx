@@ -99,6 +99,27 @@ export default function Home(){
         })
     }
 
+    async function onDelete(e){
+        e.preventDefault();
+
+        await axios.delete("http://localhost:5000/api/main/delete?id=" + editWindow._id, {
+            withCredentials : true
+        }).then((e)=>{
+            notifySuccess("Deleted Successfully!")
+            setEditWindow(null);
+        }).catch((e)=>{
+            console.log(e);
+        })
+    }
+
+    const [showInfo, SetshowInfo] = useState(false);
+
+    async function onInfo(e){
+        e.preventDefault();
+
+        SetshowInfo(true);
+    }
+
     return <div className="flex flex-col justify-between h-screen w-screeen">
         {/* Header */}
         <div className="flex flex-row justify-between items-center bg-[#6c757d] h-20 pl-4 pr-4">
@@ -120,7 +141,7 @@ export default function Home(){
         {noteWindow ? <div>
                 <form onSubmit={(e) => addNote(e)}>
                     <input type="text" placeholder="Title" onChange={(e)=>setTitle(e.target.value)}></input>
-                    <input type="text" placeholder="Content" onChange={(e)=>setContent(e.target.value)}></input>
+                    <textarea type="text" placeholder="Content" onChange={(e)=>setContent(e.target.value)}></textarea>
                     <button type="submit">Add Note</button>
                 </form>
             </div> : <></>
@@ -146,7 +167,17 @@ export default function Home(){
 
             {editWindow == null ? <></> : <div>
                 <input defaultValue={editWindow.title} onChange={(e)=>setTitle(e.target.value)}></input>
-                <input defaultValue={editWindow.content} onChange={(e)=>setContent(e.target.value)}></input>
+
+                {/* Info Box */}
+                {showInfo ? <div onClick={()=>SetshowInfo(false)}>
+                    <p>Information</p>
+                    <p>Created at: {editWindow.createdAt}</p>
+                    <p>Updated at: {editWindow.updatedAt}</p>
+                </div> : <></>}
+
+                <textarea defaultValue={editWindow.content} onChange={(e)=>setContent(e.target.value)}></textarea>
+                <button onClick={(e)=>onInfo(e)}>i</button>
+                <button onClick={(e)=>onDelete(e)}>-</button>
                 <button onClick={(e)=>onEdit(e)}>save</button>
             </div>}
         </div>
