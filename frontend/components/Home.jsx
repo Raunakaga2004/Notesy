@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom"
 import { useState, useEffect, use } from "react"
 import axios from "axios"
 
-import { notifyDefault } from "../utils/toast"
+import { notifyDefault, notifyError, notifySuccess } from "../utils/toast"
 import { btn } from "../styles_ui/btn"
 import DisplayNotes from "./DisplayNotes"
 
@@ -10,6 +10,8 @@ export default function Home(){
     const [user, setUser] = useState({}) //user details except password will be stored
 
     const [noteWindow, setNoteWindow] = useState(false); // note window to edit or add note // a form to submit
+
+    const [editWindow, setEditWindow] = useState(null); // note window for specific note to edit or view that note fully
 
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
@@ -55,8 +57,13 @@ export default function Home(){
                 setNoteWindow(false);
                 notifyDefault("Note Added!");
             }).catch((e)=>{
+                notifyError("Sign In/Sign Up to use Notesy")
+                setNoteWindow(false);
                 console.log(e);
             })
+
+        setTitle("");
+        setContent("");
     }
 
     // to get all the notes from database 
@@ -72,7 +79,25 @@ export default function Home(){
             })
         }
         fetch();
-    }, [noteWindow])
+    }, [noteWindow, editWindow])
+
+    async function onEdit(e){
+        e.preventDefault();
+
+        await axios.put("http://localhost:5000/api/main/update?id=" + editWindow._id,{
+            title : title == "" ? editWindow.title : title,
+            content : content == "" ? editWindow.content : content
+        }, {
+            withCredentials : true
+        }).then(()=>{
+            notifySuccess("Editted Successfully!")
+            setTitle("");
+            setContent("");
+            setEditWindow(null); 
+        }).catch((e)=>{
+            console.log(e)
+        })
+    }
 
     return <div className="flex flex-col justify-between h-screen w-screeen">
         {/* Header */}
@@ -106,10 +131,24 @@ export default function Home(){
         <div>
             {notes.map((note)=>{
 
-                return <div>
-                    {DisplayNotes(note)}
+                async function noteClick(note){
+                    setEditWindow(note);
+                }
+
+                return <div key={note._id} onClick={()=>noteClick(note)}>
+                    <br/>
+                    {note.title}<br/>
+                    {note.content}
+                    {/* not show full content at last use ... */}
+                    {/* by using text-overflow in tailwind */}
                 </div>
             })}
+
+            {editWindow == null ? <></> : <div>
+                <input defaultValue={editWindow.title} onChange={(e)=>setTitle(e.target.value)}></input>
+                <input defaultValue={editWindow.content} onChange={(e)=>setContent(e.target.value)}></input>
+                <button onClick={(e)=>onEdit(e)}>save</button>
+            </div>}
         </div>
     </div>
 }
