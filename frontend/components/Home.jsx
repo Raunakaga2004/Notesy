@@ -41,6 +41,8 @@ export default function Home(){
 
                 console.log("Signed Out Successfully!")
                 setUser({}) // as the user signs out reset user variable to empty object and reload this component
+                setNotes([]) // set notes as empty
+                
             }).catch((e)=>{
                 console.log(e);
             })
