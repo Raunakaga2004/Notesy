@@ -3,7 +3,7 @@ import { useState, useEffect, use } from "react"
 import axios from "axios"
 
 import { notifyDefault, notifyError, notifySuccess } from "../utils/toast"
-import { btn } from "../styles_ui/btn"
+import { btn, btn2 } from "../styles_ui/btn"
 import DisplayNotes from "./DisplayNotes"
 
 export default function Home(){
@@ -119,10 +119,10 @@ export default function Home(){
     async function onInfo(e){
         e.preventDefault();
 
-        SetshowInfo(true);
+        SetshowInfo(!showInfo);
     }
 
-    return <div className="flex flex-col justify-between h-screen w-screeen">
+    return <div className="flex flex-col h-screen w-screeen">
         {/* Header */}
         <div className="flex flex-row justify-between items-center bg-[#6c757d] h-20 pl-4 pr-4">
             <div className="font-semibold text-lg">Notesy</div>
@@ -136,15 +136,18 @@ export default function Home(){
             }
         </div>
         
-        <div>
+        <div className="flex justify-center m-4">
             {/* to add note =>  open the note window*/}
-            <button onClick={()=>setNoteWindow(true)}>+</button>
+            <button onClick={()=>setNoteWindow(true)} className={btn2}>ADD NOTE</button>
         </div>
-        {noteWindow ? <div>
-                <form onSubmit={(e) => addNote(e)}>
+        {noteWindow ? <div className="fixed inset-0 flex justify-center items-center">
+                <form onSubmit={(e) => addNote(e)} className="relative p-8 flex flex-col border rounded-lg bg-gray-200 h-100 w-full">
+                    <button onClick={()=>setNoteWindow(false)} className="absolute right-2 top-2 pl-1 pr-1 rounded-lg hover:bg-red-400 hover:border">X</button>
+
                     <input type="text" placeholder="Title" onChange={(e)=>setTitle(e.target.value)}></input>
-                    <textarea type="text" placeholder="Content" onChange={(e)=>setContent(e.target.value)}></textarea>
-                    <button type="submit">Add Note</button>
+                    <hr></hr>
+                    <textarea type="text" placeholder="Content" onChange={(e)=>setContent(e.target.value)} className="h-full"></textarea>
+                    <button type="submit" className="absolute bottom-2 right-1/2 pl-1 pr-1 rounded-lg hover:bg-blue-400 hover:border">Save</button>
                 </form>
             </div> : <></>
             // use textarea for 'content' instead of input box
@@ -158,29 +161,40 @@ export default function Home(){
                     setEditWindow(note);
                 }
 
-                return <div key={note._id} onClick={()=>noteClick(note)}>
-                    <br/>
-                    {note.title}<br/>
+                return <div key={note._id} onClick={()=>noteClick(note)} className="border p-2 flex flex-col justify-center m-2 rounded-sm cursor-pointer">
+                    {note.title}
+                    <hr></hr>
                     {note.content}
                     {/* not show full content at last use ... */}
                     {/* by using text-overflow in tailwind */}
                 </div>
             })}
 
-            {editWindow == null ? <></> : <div>
-                <input defaultValue={editWindow.title} onChange={(e)=>setTitle(e.target.value)}></input>
+            {editWindow == null ? <></> : <div className="fixed inset-0 flex justify-center items-center">
+                <div className="relative p-8 flex flex-col border rounded-lg bg-gray-200 h-100 w-full">
 
-                {/* Info Box */}
-                {showInfo ? <div onClick={()=>SetshowInfo(false)}>
-                    <p>Information</p>
-                    <p>Created at: {editWindow.createdAt}</p>
-                    <p>Updated at: {editWindow.updatedAt}</p>
-                </div> : <></>}
-
-                <textarea defaultValue={editWindow.content} onChange={(e)=>setContent(e.target.value)}></textarea>
-                <button onClick={(e)=>onInfo(e)}>i</button>
-                <button onClick={(e)=>onDelete(e)}>-</button>
-                <button onClick={(e)=>onEdit(e)}>save</button>
+                    <div className="absolute right-2 top-2 flex gap-2">
+                        <button onClick={(e)=>onInfo(e)} className="pl-3 pr-3 rounded-full hover:bg-blue-100 border">i</button>
+                        <button onClick={()=>setEditWindow(null)} className="pl-1 pr-1 rounded-lg hover:bg-red-400 hover:border border-1">X</button>
+                    </div>
+                    
+                    {/* Info Box */}
+                    {showInfo ? <div onClick={()=>SetshowInfo(false)} className="fixed bg-gray-400 border rounded-lg p-2">
+                        <p>Information</p>
+                        <hr></hr>
+                        <p>Created at: {editWindow.createdAt}</p>
+                        <p>Updated at: {editWindow.updatedAt}</p>
+                    </div> : <></>}
+                    
+                    <input defaultValue={editWindow.title} onChange={(e)=>setTitle(e.target.value)}></input>
+                    <hr></hr>
+                    <textarea defaultValue={editWindow.content} onChange={(e)=>setContent(e.target.value)} className="h-full"></textarea>
+                    
+                    <div className="absolute bottom-2 right-2 flex justify-center items-center gap-2">
+                        <button onClick={(e)=>onEdit(e)} className="rounded-lg hover:bg-blue-400 hover:border pl-1 pr-1">Save</button>
+                        <button onClick={(e)=>onDelete(e)} className="rounded-lg hover:bg-red-400 hover:border pl-1 pr-1">Delete</button>
+                    </div>
+                </div>
             </div>}
         </div>
     </div>
